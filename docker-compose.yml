@@ -7,6 +7,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      - PORT=3000
       - MYSQL_HOST=db
       - MYSQL_DATABASE=db_annonces
       - MYSQL_USER=appuser
