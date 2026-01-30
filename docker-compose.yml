@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: petitesannonces-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=db_annonces
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=userpwd
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: petitesannonces-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=db_annonces
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=userpwd
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./backend/db/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: petitesannonces-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  db_data:
+    driver: local
